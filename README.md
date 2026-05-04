@@ -60,9 +60,13 @@ Finished videos are saved to `Export/videoname_v1/`. Each new set of cuts gets a
 
 ### 4. Import into DaVinci Resolve (optional)
 
-The export also generates an EDL file — a standard format that video editing software uses to represent a cut timeline. To import it into DaVinci Resolve: add your source video to the media pool first, then go to File → Import Timeline → Import AAF, EDL, XML and select the `.edl` file from your `Media/` folder.
+The export also generates an EDL file. EDL is a widely supported format and may work with other video editors, but we've only tested it with DaVinci Resolve.
+
+**Important: add your source video to the media pool before importing the EDL.** Resolve uses the media pool to link EDL events to source clips — if the video isn't there first, the clips won't link and audio won't show up.
+
+File → Import Timeline → Import AAF, EDL, XML → select the `.edl` from your `Media/` folder. The WAV audio file is picked up automatically since it lives in the same folder as the EDL.
 
 ## Notes
 
 - Transcription runs on your CPU by default, which is slower. If your machine has a compatible GPU, Whisper will use it automatically and run significantly faster.
-- The WAV file in `Media/` is used for the Resolve EDL — Resolve has a known issue with AAC audio in EDL imports that causes the first clip to be silent. The WAV avoids this.
+- The WAV file in `Media/` is used for EDL audio. Resolve has a known issue with AAC audio in EDL imports that causes the first clip to be silent. The WAV avoids this.
