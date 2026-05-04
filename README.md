@@ -13,6 +13,14 @@ pip install -r requirements.txt
 
 **[Claude Code](https://claude.ai/code)** — the workflow is designed to be driven by Claude Code, which reads the analysis output, decides what to cut, writes the notes file, and runs the export.
 
+## Getting started
+
+1. Download or clone this repository to your machine.
+2. Install the dependencies listed above.
+3. Open Claude Code and set the working directory to the folder where you downloaded the repo. Claude Code automatically reads the `CLAUDE.md` file in that folder, which contains the full workflow instructions. Alternatively, you can paste the path to `CLAUDE.md` directly into Claude and ask it to read the file.
+
+Once that's done, you're ready to start editing.
+
 ## How to use it
 
 ### 1. Analyze your video
