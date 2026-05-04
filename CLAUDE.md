@@ -57,6 +57,7 @@ Segments: (start1, end1), (start2, end2), ...
 ```
 python "<path to this folder>/export.py" "Media/videoname.mp4" <version>
 ```
+`<version>` is a bare number (e.g. `1`, `2`). Do NOT pass `v1` — the script prepends `_v` itself and will fail with a FileNotFoundError if given `v1`.
 `export.py` reads everything from the notes file, renders via ffmpeg, generates versioned EDL into `Media/`.
 
 **5. Import into DaVinci Resolve**
