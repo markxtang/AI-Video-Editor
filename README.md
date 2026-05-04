@@ -4,7 +4,7 @@ A video editing pipeline that uses AI to transcribe your footage, identify probl
 
 ## What you need
 
-**[ffmpeg](https://ffmpeg.org/download.html)** — a free command-line tool that processes and exports video. It needs to be installed on your system before anything else will work.
+**[ffmpeg](https://ffmpeg.org/download.html)** — a command-line tool that processes and exports video.
 
 **[openai-whisper](https://github.com/openai/whisper)** — a speech-to-text model that transcribes your video locally on your machine. Install it by running:
 ```
