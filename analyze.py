@@ -1,5 +1,5 @@
 import warnings
-import whisper
+import stable_whisper
 import subprocess
 import re
 import sys
@@ -87,22 +87,22 @@ def process(video_path, noise_db=-30, min_silence=0.1, suffix=""):
 
     # --- Whisper ---
     print("Loading Whisper model...")
-    model = whisper.load_model("base")
+    model = stable_whisper.load_model("base")
     print(f"Transcribing...")
     result = model.transcribe(
         dest_video,
-        word_timestamps=True,
-        initial_prompt="Um, uh, like, you know, so, uh, um, hmm, ah, er..."
+        initial_prompt="Um, uh, like, you know, so, uh, um, hmm, ah, er...",
+        suppress_silence=False
     )
 
     words = []
-    for seg in result["segments"]:
-        for word in seg["words"]:
+    for seg in result.segments:
+        for word in seg.words:
             words.append({
-                "word": word["word"].strip(),
-                "start": word["start"],
-                "end": word["end"],
-                "duration": word["end"] - word["start"]
+                "word": word.word.strip(),
+                "start": word.start,
+                "end": word.end,
+                "duration": word.end - word.start
             })
 
     # --- ffmpeg silence detection ---
@@ -116,7 +116,7 @@ def process(video_path, noise_db=-30, min_silence=0.1, suffix=""):
     # 1. Plain transcript
     transcript_path = transcript_base + f"{suffix}.txt"
     with open(transcript_path, "w", encoding="utf-8") as f:
-        f.write(result["text"].strip())
+        f.write(result.text.strip())
 
     # 2. Analysis timeline
     timeline = []
@@ -126,11 +126,12 @@ def process(video_path, noise_db=-30, min_silence=0.1, suffix=""):
         timeline.append(("pause", p["silence_start"], p))
     timeline.sort(key=lambda x: x[1])
 
+    WORD_END_BUFFER = 0.3
     analysis_path = transcript_base + f"{suffix}_analysis.txt"
     with open(analysis_path, "w", encoding="utf-8") as f:
         for kind, _, item in timeline:
             if kind == "word":
-                line = f"[{item['start']:.2f}s - {item['end']:.2f}s]  {item['word']}"
+                line = f"[{item['start']:.2f}s - {item['end'] + WORD_END_BUFFER:.2f}s]  {item['word']}"
                 if item["start"] in long_word_starts:
                     line += f"  << LONG WORD ({item['duration']:.2f}s)"
                 f.write(line + "\n")
