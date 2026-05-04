@@ -1,44 +1,62 @@
 # AI Video Editor
 
-Record your video, then tell Claude what to cut — in plain English. Claude listens to what you said, spots the pauses and stumbles, and exports a clean version automatically.
+A video editing pipeline that uses AI to transcribe your footage, identify problem areas, and export trimmed clips. The workflow is designed to be run through Claude Code — you describe what you want cut, and Claude handles the timecodes, the notes file, and the export commands.
 
 ## What you need
 
-**[ffmpeg](https://ffmpeg.org/download.html)** — the tool that actually cuts and exports the video. Free to download.
+**[ffmpeg](https://ffmpeg.org/download.html)** — a free command-line tool that processes and exports video. It needs to be installed on your system before anything else will work.
 
-**[openai-whisper](https://github.com/openai/whisper)** — the AI that transcribes your video so Claude can read what you said.
-
-**[Claude Code](https://claude.ai/code)** — the workflow is designed to be driven by Claude Code, which reads the analysis output, decides what to cut, writes the notes file, and runs the export.
-
-Once ffmpeg and Claude Code are installed, run this once to set up Whisper:
+**[openai-whisper](https://github.com/openai/whisper)** — a speech-to-text model that transcribes your video locally on your machine. Install it by running:
 ```
 pip install -r requirements.txt
 ```
 
-## How it works
+**[Claude Code](https://claude.ai/code)** — the workflow is designed to be driven by Claude Code, which reads the analysis output, decides what to cut, writes the notes file, and runs the export.
+
+## How to use it
 
 ### 1. Analyze your video
 
-Give Claude the path to your video file and ask it to analyze it. Claude will run the analysis and show you a transcript with timestamps, flagging pauses, filler words (um, uh), and any stumbles.
+Tell Claude the path to your video file and ask it to analyze it. Claude runs `analyze.py`, which does two things: transcribes the audio using Whisper, and scans for silences using ffmpeg. It creates a project folder next to your video with this structure:
+
+```
+videoname/
+  Media/        — copy of your original video + a WAV audio file
+  Transcripts/  — plain transcript + a timestamped analysis file
+  Export/       — where finished exports are saved
+```
+
+The analysis file lists every word with its start and end time, and flags pauses, filler words (um, uh), and unusually long words.
 
 ### 2. Tell Claude what to cut
 
-Just describe what you want removed in plain English — "cut the pause at the end", "remove that whole sentence", "end the video after I say X". Claude figures out the exact timestamps and prepares the export.
+Read through the transcript and tell Claude what you want removed — you can reference specific words, sentences, or time ranges. Claude identifies the exact timecodes, creates a notes file in the Export folder, and runs the export.
 
-### 3. Choose your export settings
+The notes file looks like this:
+```
+Version: v1
+Date: YYYY-MM-DD
 
-Claude will ask what resolution you want. You can say things like "1080p", "square for Instagram", or "same as the original". It handles the rest.
+Cuts:
+Description of what was removed
 
-### 4. Get your video
+Segments: (0.00, 4.50), (6.20, 12.00)
+```
 
-Claude exports the finished video into an `Export/` folder next to your original. Each version is numbered so nothing gets overwritten — you can always go back to a previous cut.
+`Segments` is the only required field. Each pair of numbers is a start and end time (in seconds) of footage to keep. Optional fields:
+- `Scale: 1920x1080` — output resolution. Claude will ask if you don't specify.
+- `Crop: 2088x2088` — crops the frame before scaling, from the center.
+- `Suffix: 1080p` — added to the output filename (e.g. `videoname_v1_1080p.mp4`).
 
-### 5. Import into DaVinci Resolve (optional)
+### 3. Review the export
 
-If you edit in DaVinci Resolve, Claude also generates a timeline file you can import directly — so you can do color grading or audio work on top of the cuts.
+Finished videos are saved to `Export/videoname_v1/`. Each new set of cuts gets a new version number, so previous exports are never overwritten. Multiple formats of the same cut (e.g. 1080p and square) go in the same version folder.
 
-## Tips
+### 4. Import into DaVinci Resolve (optional)
 
-- The longer the video, the longer the initial analysis takes — Whisper is running on your CPU.
-- You can do multiple rounds of cuts without re-analyzing. Just tell Claude what else to change and it'll export a new version.
-- If you want the same cuts at a different size (say, both 1080p and square), Claude can export both into the same version folder without incrementing the version number.
+The export also generates an EDL file — a standard format that video editing software uses to represent a cut timeline. To import it into DaVinci Resolve: add your source video to the media pool first, then go to File → Import Timeline → Import AAF, EDL, XML and select the `.edl` file from your `Media/` folder.
+
+## Notes
+
+- Transcription runs on your CPU by default, which is slower. If your machine has a compatible GPU, Whisper will use it automatically and run significantly faster.
+- The WAV file in `Media/` is used for the Resolve EDL — Resolve has a known issue with AAC audio in EDL imports that causes the first clip to be silent. The WAV avoids this.
