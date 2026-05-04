@@ -15,7 +15,7 @@ Install the dependencies listed above. Once you have Claude, you can ask it to i
 ## Getting started
 
 1. Download or clone this repository to your machine.
-2. Open Claude Code and set the working directory to the folder where you downloaded the repo. Claude Code automatically reads the `CLAUDE.md` file in that folder, which contains the full workflow instructions. Or give Claude the path to `CLAUDE.md` and ask it to read the file.
+2. Open Claude Code and set the working directory to the folder where you downloaded the repo. Claude Code automatically reads the `CLAUDE.md` file in that folder. Or give Claude the path to `CLAUDE.md` and ask it to read the file.
 
 Once that's done, you're ready to start editing.
 
