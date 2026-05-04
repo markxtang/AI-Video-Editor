@@ -64,7 +64,7 @@ The export also generates an EDL file. EDL is a widely supported format and may 
 
 **Important: add your source video to the media pool before importing the EDL.** Resolve uses the media pool to link EDL events to source clips — if the video isn't there first, the clips won't link and audio won't show up.
 
-File → Import Timeline → Import AAF, EDL, XML → select the `.edl` from your `Media/` folder. The WAV audio file is picked up automatically since it lives in the same folder as the EDL.
+Once the video is in the media pool, go to File → Import Timeline → Import AAF, EDL, XML → select the `.edl` from your `Media/` folder. The WAV audio file is picked up automatically since it lives in the same folder as the EDL.
 
 ## Notes
 
