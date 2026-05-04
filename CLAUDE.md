@@ -26,9 +26,16 @@ python "<path to this folder>/analyze.py" "path/to/video.mp4"
 Creates project folder with subfolders, runs Whisper transcription + ffmpeg silence detection.
 Outputs: `Transcripts/videoname.txt`, `Transcripts/videoname_analysis.txt`, `Media/videoname.wav`
 
-**2. Review `_analysis.txt`**
-Identify cuts: pauses, stumbles (false starts show as repeated words), long words, filler words (um/uh).
-`analyze.py` outputs 2 files — plain transcript and analysis timeline.
+**2. Review `_analysis.txt` and present a summary**
+After analyze.py completes, read both output files and present:
+1. The plain transcript text
+2. Flagged items grouped by type (omit any group with nothing to report):
+   - **Long words** — word, timecode, duration
+   - **Pauses** — duration, timecode
+   - **Filler words** — word, timecode
+   - **Stumbles** — repeated words close together indicating a false start
+3. Suggested cuts with timecodes and a brief reason for each
+Then ask the user what they want to cut.
 
 **3. Write the notes file**
 Create `Export/videoname_vN/videoname_vN.txt` with this format:
@@ -41,9 +48,10 @@ Cuts:
 
 Scale: 1920x1080
 Suffix: 1080p
+Padding: 0.2  # seconds added to the end of each segment to avoid the last word getting cut off
 Segments: (start1, end1), (start2, end2), ...
 ```
-`Scale:`, `Crop:`, `Suffix:`, and `Padding:` are optional. `Segments:` is required. `Padding:` adds seconds to the end of each segment (default 0.2).
+`Scale:`, `Crop:`, and `Suffix:` are optional. `Padding:` and `Segments:` are required. Always include `Padding:` with the comment exactly as shown above — use 0.2 unless the user specifies otherwise.
 
 **4. Run export.py**
 ```
