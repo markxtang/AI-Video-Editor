@@ -1,5 +1,5 @@
 import warnings
-import stable_whisper
+import whisper
 import subprocess
 import re
 import sys
@@ -87,22 +87,22 @@ def process(video_path, noise_db=-30, min_silence=0.1, suffix=""):
 
     # --- Whisper ---
     print("Loading Whisper model...")
-    model = stable_whisper.load_model("base")
+    model = whisper.load_model("base")
     print(f"Transcribing...")
     result = model.transcribe(
         dest_video,
-        initial_prompt="Um, uh, like, you know, so, uh, um, hmm, ah, er...",
-        suppress_silence=False
+        word_timestamps=True,
+        initial_prompt="Um, uh, like, you know, so, uh, um, hmm, ah, er..."
     )
 
     words = []
-    for seg in result.segments:
-        for word in seg.words:
+    for seg in result["segments"]:
+        for word in seg["words"]:
             words.append({
-                "word": word.word.strip(),
-                "start": word.start,
-                "end": word.end,
-                "duration": word.end - word.start
+                "word": word["word"].strip(),
+                "start": word["start"],
+                "end": word["end"],
+                "duration": word["end"] - word["start"]
             })
 
     # --- ffmpeg silence detection ---
@@ -116,7 +116,7 @@ def process(video_path, noise_db=-30, min_silence=0.1, suffix=""):
     # 1. Plain transcript
     transcript_path = transcript_base + f"{suffix}.txt"
     with open(transcript_path, "w", encoding="utf-8") as f:
-        f.write(result.text.strip())
+        f.write(result["text"].strip())
 
     # 2. Analysis timeline
     timeline = []
