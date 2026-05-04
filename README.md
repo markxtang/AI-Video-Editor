@@ -6,10 +6,12 @@ AI-assisted video editing pipeline. Transcribes video with Whisper, detects paus
 
 **System:** [ffmpeg](https://ffmpeg.org/download.html) (must be in PATH)
 
-**Python:**
+**Python:** [openai-whisper](https://github.com/openai/whisper)
 ```
 pip install -r requirements.txt
 ```
+
+**AI:** [Claude Code](https://claude.ai/code) — the workflow is designed to be driven by Claude Code, which reads the analysis output, decides what to cut, writes the notes file, and runs the export.
 
 ## Usage
 
