@@ -1,12 +1,11 @@
-import warnings
 import whisper
+import torch
 import subprocess
 import re
 import sys
 import os
 import shutil
 
-warnings.filterwarnings("ignore", message="FP16 is not supported on CPU")
 
 def detect_silences(video_path, noise_db=-30, min_duration=0.1):
     cmd = [
@@ -87,7 +86,8 @@ def process(video_path, noise_db=-30, min_silence=0.1, suffix=""):
 
     # --- Whisper ---
     print("Loading Whisper model...")
-    model = whisper.load_model("base")
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = whisper.load_model("base", device=device)
     print(f"Transcribing...")
     result = model.transcribe(
         dest_video,
