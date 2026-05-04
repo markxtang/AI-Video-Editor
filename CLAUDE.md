@@ -80,6 +80,13 @@ Add source video to media pool first so Resolve links correctly. WAV auto-found 
 - Instructions are ambiguous
 - A judgment call is needed on a timecode boundary
 
+## Segment boundary rule
+When a segment ends just before removed content (an "um,", filler word, or stumble), set the segment end to `filler_start - padding` (e.g. `filler_start - 0.2`), NOT to `filler_start`.
+
+**Why:** `export.py` adds `padding` to every segment end before passing to ffmpeg. If `segment_end = filler_start`, ffmpeg cuts at `filler_start + padding`, which includes `padding` seconds of the filler sound. Setting `segment_end = filler_start - padding` makes ffmpeg cut at exactly `filler_start`.
+
+This only applies when the segment ends adjacent to filler. Segments ending at a silence/pause are unaffected — the gap absorbs the padding naturally.
+
 ## Key technical notes
 - WAV (PCM) required for Resolve EDL audio — AAC causes silent first clips due to decoder priming
 - `analyze.py` uses Whisper `base` model with `initial_prompt` to catch filler words (um, uh)
