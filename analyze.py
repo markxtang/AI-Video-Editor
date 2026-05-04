@@ -61,7 +61,7 @@ def find_long_words(words, threshold=2.0):
     cutoff = mean + threshold * stddev
     return [w for w in words if w["duration"] >= cutoff]
 
-def process(video_path, noise_db=-30, min_silence=0.1, suffix=""):
+def analyze(video_path, noise_db=-30, min_silence=0.1, suffix=""):
     video_path = os.path.abspath(video_path)
     video_dir  = os.path.dirname(video_path)
     video_name = os.path.splitext(os.path.basename(video_path))[0]
@@ -88,7 +88,7 @@ def process(video_path, noise_db=-30, min_silence=0.1, suffix=""):
     print("Loading Whisper model...")
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = whisper.load_model("base", device=device)
-    print(f"Transcribing...")
+    print("Transcribing...")
     result = model.transcribe(
         dest_video,
         word_timestamps=True,
@@ -153,7 +153,7 @@ def process(video_path, noise_db=-30, min_silence=0.1, suffix=""):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: py process.py <video_path> [noise_db=-30] [min_silence=0.1] [suffix]")
+        print("Usage: py analyze.py <video_path> [noise_db=-30] [min_silence=0.1] [suffix]")
         sys.exit(1)
 
     video_path = sys.argv[1]
@@ -161,4 +161,4 @@ if __name__ == "__main__":
     min_silence = float(sys.argv[3]) if len(sys.argv) > 3 else 0.1
     suffix = sys.argv[4] if len(sys.argv) > 4 else ""
 
-    process(video_path, noise_db, min_silence, suffix)
+    analyze(video_path, noise_db, min_silence, suffix)
