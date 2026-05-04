@@ -21,14 +21,14 @@ Each `Export/vN/` contains:
 
 **1. Analyze the video**
 ```
-py "<path to this folder>\analyze.py" "path\to\video.mp4"
+python "<path to this folder>/analyze.py" "path/to/video.mp4"
 ```
 Creates project folder with subfolders, runs Whisper transcription + ffmpeg silence detection.
 Outputs: `Transcripts/videoname.txt`, `Transcripts/videoname_analysis.txt`, `Media/videoname.wav`
 
 **2. Review `_analysis.txt`**
 Identify cuts: pauses, stumbles (false starts show as repeated words), long words, filler words (um/uh).
-`analyze.py` outputs 2 files — plain transcript and analysis timeline. Do not re-add word-level timestamps file unless user asks.
+`analyze.py` outputs 2 files — plain transcript and analysis timeline.
 
 **3. Write the notes file**
 Create `Export/videoname_vN/videoname_vN.txt` with this format:
@@ -47,9 +47,9 @@ Segments: (start1, end1), (start2, end2), ...
 
 **4. Run export.py**
 ```
-py "<path to this folder>\export.py" "Media/videoname.mp4" <version>
+python "<path to this folder>/export.py" "Media/videoname.mp4" <version>
 ```
-`export.py` is fully static — never edited. It reads everything from the notes file, renders via ffmpeg, generates versioned EDL into `Media/`.
+`export.py` reads everything from the notes file, renders via ffmpeg, generates versioned EDL into `Media/`.
 
 **5. Import into DaVinci Resolve**
 File → Import Timeline → Import AAF, EDL, XML → select `.edl` from `Media/`.
@@ -78,4 +78,4 @@ Add source video to media pool first so Resolve links correctly. WAV auto-found 
 - Pause threshold: min 0.5s, max 2.0s
 - Long word detection: flags words > 2 standard deviations above mean duration
 - EDL uses separate `V` and `AA` events per clip (video from MP4, audio from WAV)
-- Check source resolution with ffprobe before exporting; set Scale: accordingly
+- If no Scale: is set, export.py detects source resolution via ffprobe and prompts the user to confirm or enter a custom value
