@@ -18,6 +18,7 @@ def generate_edl(video_path, segments, fps=30):
     wav_name    = os.path.splitext(clip_name)[0] + ".wav"
     title       = os.path.splitext(clip_name)[0]
     output_path = os.path.splitext(video_path)[0] + ".edl"
+    tc_offset   = get_timecode_offset(video_path)
 
     lines = [f"TITLE: {title}", "FCM: NON-DROP FRAME", ""]
     record_time = 0.0
@@ -25,9 +26,9 @@ def generate_edl(video_path, segments, fps=30):
         duration = src_out - src_in
         rec_in   = record_time
         rec_out  = record_time + duration
-        lines.append(f"{i:03d}  001      V     C        {seconds_to_tc(src_in, fps)} {seconds_to_tc(src_out, fps)} {seconds_to_tc(rec_in, fps)} {seconds_to_tc(rec_out, fps)}")
+        lines.append(f"{i:03d}  001      V     C        {seconds_to_tc(src_in + tc_offset, fps)} {seconds_to_tc(src_out + tc_offset, fps)} {seconds_to_tc(rec_in, fps)} {seconds_to_tc(rec_out, fps)}")
         lines.append(f"* FROM CLIP NAME: {clip_name}")
-        lines.append(f"{i:03d}  002      AA    C        {seconds_to_tc(src_in, fps)} {seconds_to_tc(src_out, fps)} {seconds_to_tc(rec_in, fps)} {seconds_to_tc(rec_out, fps)}")
+        lines.append(f"{i:03d}  002      AA    C        {seconds_to_tc(src_in + tc_offset, fps)} {seconds_to_tc(src_out + tc_offset, fps)} {seconds_to_tc(rec_in, fps)} {seconds_to_tc(rec_out, fps)}")
         lines.append(f"* FROM CLIP NAME: {wav_name}")
         lines.append("")
         record_time = rec_out
@@ -60,6 +61,20 @@ def read_notes(notes_path):
     if not segments:
         raise ValueError(f"No segments found in {notes_path}")
     return segments, scale, crop, suffix
+
+def get_timecode_offset(video_path):
+    for scope in ["stream_tags=timecode", "format_tags=timecode"]:
+        result = subprocess.run(
+            ["ffprobe", "-v", "error", "-select_streams", "v:0",
+             "-show_entries", scope,
+             "-of", "default=noprint_wrappers=1:nokey=1", video_path],
+            capture_output=True, text=True
+        )
+        tc = result.stdout.strip()
+        if tc:
+            h, m, s, f = map(int, tc.split(":"))
+            return h * 3600 + m * 60 + s + f / 30.0
+    return 0.0
 
 def get_source_resolution(video_path):
     result = subprocess.run(
