@@ -2,7 +2,6 @@ import sys
 import os
 import re
 import subprocess
-from datetime import date
 
 def seconds_to_tc(seconds, fps=30):
     total_frames = round(seconds * fps)
@@ -59,7 +58,7 @@ def read_notes(notes_path):
             elif line.startswith("Suffix:"):
                 suffix = line.split(":", 1)[1].strip()
             elif line.startswith("Padding:"):
-                padding = float(line.split(":", 1)[1].strip())
+                padding = float(line.split(":", 1)[1].split("#")[0].strip())
 
     if not segments:
         raise ValueError(f"No segments found in {notes_path}")
