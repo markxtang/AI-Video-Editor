@@ -4,20 +4,18 @@ A video editing pipeline that uses AI to transcribe your footage, identify probl
 
 ## What you need
 
+**[Claude Code](https://claude.ai/code)** — Claude Code reads the analysis output, decides what to cut, writes the notes file, and runs the export.
+
 **[ffmpeg](https://ffmpeg.org/download.html)** — a command-line tool that processes and exports video.
 
-**[openai-whisper](https://github.com/openai/whisper)** — a speech-to-text model that transcribes your video locally on your machine. Install it by running:
-```
-pip install -r requirements.txt
-```
+**[openai-whisper](https://github.com/openai/whisper)** — a speech-to-text model that transcribes your video locally on your machine.
 
-**[Claude Code](https://claude.ai/code)** — the workflow is designed to be driven by Claude Code, which reads the analysis output, decides what to cut, writes the notes file, and runs the export.
+Install the dependencies listed above. Once you have Claude, you can ask it to install the others for you.
 
 ## Getting started
 
 1. Download or clone this repository to your machine.
-2. Install the dependencies listed above.
-3. Open Claude Code and set the working directory to the folder where you downloaded the repo. Claude Code automatically reads the `CLAUDE.md` file in that folder, which contains the full workflow instructions. Alternatively, you can paste the path to `CLAUDE.md` directly into Claude and ask it to read the file.
+2. Open Claude Code and set the working directory to the folder where you downloaded the repo. Claude Code automatically reads the `CLAUDE.md` file in that folder, which contains the full workflow instructions. Or give Claude the path to `CLAUDE.md` and ask it to read the file.
 
 Once that's done, you're ready to start editing.
 
