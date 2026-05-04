@@ -126,12 +126,11 @@ def process(video_path, noise_db=-30, min_silence=0.1, suffix=""):
         timeline.append(("pause", p["silence_start"], p))
     timeline.sort(key=lambda x: x[1])
 
-    WORD_END_BUFFER = 0.3
     analysis_path = transcript_base + f"{suffix}_analysis.txt"
     with open(analysis_path, "w", encoding="utf-8") as f:
         for kind, _, item in timeline:
             if kind == "word":
-                line = f"[{item['start']:.2f}s - {item['end'] + WORD_END_BUFFER:.2f}s]  {item['word']}"
+                line = f"[{item['start']:.2f}s - {item['end']:.2f}s]  {item['word']}"
                 if item["start"] in long_word_starts:
                     line += f"  << LONG WORD ({item['duration']:.2f}s)"
                 f.write(line + "\n")

@@ -42,6 +42,7 @@ def read_notes(notes_path):
     scale    = None
     crop     = None
     suffix   = ""
+    padding  = 0.2
 
     with open(notes_path, "r", encoding="utf-8") as f:
         for line in f:
@@ -57,9 +58,12 @@ def read_notes(notes_path):
                 crop = (int(w), int(h))
             elif line.startswith("Suffix:"):
                 suffix = line.split(":", 1)[1].strip()
+            elif line.startswith("Padding:"):
+                padding = float(line.split(":", 1)[1].strip())
 
     if not segments:
         raise ValueError(f"No segments found in {notes_path}")
+    segments = [(s, e + padding) for s, e in segments]
     return segments, scale, crop, suffix
 
 def get_timecode_offset(video_path):

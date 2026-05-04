@@ -43,7 +43,7 @@ Scale: 1920x1080
 Suffix: 1080p
 Segments: (start1, end1), (start2, end2), ...
 ```
-`Scale:`, `Crop:`, and `Suffix:` are optional. `Segments:` is required.
+`Scale:`, `Crop:`, `Suffix:`, and `Padding:` are optional. `Segments:` is required. `Padding:` adds seconds to the end of each segment (default 0.2).
 
 **4. Run export.py**
 ```
