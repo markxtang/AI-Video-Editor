@@ -8,7 +8,7 @@ If you don't know the path to this folder, ask the user to paste it. Save it to 
 ```
 videoname/
   Media/        — original .mp4 + .wav (PCM audio) + versioned .edl files (next to WAV for Resolve)
-  Transcripts/  — plain .txt + _analysis.txt
+  Transcripts/  — plain .md + _analysis.md
   Export/       — versioned subfolders: videoname_v1/, videoname_v2/, ...
 ```
 
@@ -24,9 +24,9 @@ Each `Export/vN/` contains:
 python "<path to this folder>/analyze.py" "path/to/video.mp4"
 ```
 Creates project folder with subfolders, runs Whisper transcription + ffmpeg silence detection.
-Outputs: `Transcripts/videoname.txt`, `Transcripts/videoname_analysis.txt`, `Media/videoname.wav`
+Outputs: `Transcripts/videoname.md`, `Transcripts/videoname_analysis.md`, `Media/videoname.wav`
 
-**2. Review `_analysis.txt` and present a summary**
+**2. Review `_analysis.md` and present a summary**
 After analyze.py completes, read both output files and present:
 1. The plain transcript text
 2. Flagged items grouped by type (omit any group with nothing to report):
@@ -71,6 +71,16 @@ Add source video to media pool first so Resolve links correctly. WAV auto-found 
 - Notes: `videoname_vN.txt` in `Export/vN/`
 - Multiple exports of same version (same cuts, different format) go in the same `vN/` folder
 - Increment version number for different cuts
+
+## Markdown-guided editing
+When the user provides a `videoname.md` transcript with edits already marked, derive cuts from the file instead of asking:
+
+1. Read `Transcripts/videoname.md` — find all `~~struck-through content~~` and any filler words to remove (um, uh, er, you know, etc.)
+2. Read `Transcripts/videoname_analysis.md` — use it to look up the exact start/end timecodes for each struck or filler word
+3. Build segments by removing those spans, applying the segment boundary rule throughout
+4. Show the full cut list and wait for confirmation before writing the notes file (struck content typically produces 4+ segments)
+
+Filler words that appear as *examples being demonstrated* (e.g. "word fillers like um, and, er") are content, not speech fillers — keep them.
 
 ## Editing decisions
 **Go straight to export** when instructions map cleanly to the analysis:

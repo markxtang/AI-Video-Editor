@@ -114,7 +114,7 @@ def analyze(video_path, noise_db=-30, min_silence=0.1, suffix=""):
     long_word_starts = {w["start"] for w in long_words}
 
     # 1. Plain transcript
-    transcript_path = transcript_base + f"{suffix}.txt"
+    transcript_path = transcript_base + f"{suffix}.md"
     with open(transcript_path, "w", encoding="utf-8") as f:
         f.write(result["text"].strip())
 
@@ -126,7 +126,7 @@ def analyze(video_path, noise_db=-30, min_silence=0.1, suffix=""):
         timeline.append(("pause", p["silence_start"], p))
     timeline.sort(key=lambda x: x[1])
 
-    analysis_path = transcript_base + f"{suffix}_analysis.txt"
+    analysis_path = transcript_base + f"{suffix}_analysis.md"
     with open(analysis_path, "w", encoding="utf-8") as f:
         for kind, _, item in timeline:
             if kind == "word":
